@@ -40,10 +40,10 @@ public class GameplayState extends BasicGameState {
 	int charWidth=32;
 	int startX = 842;
 	int startY = 507;
-	int verticalSpeed =5;   //Hardcoded but doesn't really mean anything
-	int horizontalSpeed =3; //Hardcoded but doesn't really mean anything
-	int gravity = verticalSpeed;
-	int projectileSpeed=(int) (2.75*horizontalSpeed);
+	float verticalSpeed =0.3f;   //Hardcoded but doesn't really mean anything
+	float horizontalSpeed = 0.18f; //Hardcoded but doesn't really mean anything
+	float gravity = verticalSpeed;
+	float projectileSpeed= 2.75f*horizontalSpeed;
 	ArrayList<Enemy> activeEnemyList;
 	ArrayList<Enemy> enemyList;
 	Image backgroundImage;
@@ -114,7 +114,7 @@ public class GameplayState extends BasicGameState {
 		
 		int i=0;
 
-		System.out.println("Size:"+activeEnemyList.size());
+		System.out.println("Enemy List Size:"+activeEnemyList.size());
 		for(Enemy enemy : activeEnemyList)
 		{	
 			g.drawImage(enemy.getSprite(), enemy.getXPos(), enemy.getYPos());
@@ -149,7 +149,7 @@ public class GameplayState extends BasicGameState {
 
 
 		//-------------------  DIRECTIONAL INPUT -------------------------//
-		handleMovement(gc);
+		handleMovement(gc, delta);
 		
 
 
@@ -166,7 +166,7 @@ public class GameplayState extends BasicGameState {
 		{
 			debug=false;
 		}
-		handleProjectile(gc);
+		handleProjectile(gc, delta);
 		//handleWeapon(gc);
 		
 		
@@ -203,7 +203,7 @@ public class GameplayState extends BasicGameState {
 	 * @param gc
 	 * @throws SlickException
 	 */
-	private void handleProjectile(GameContainer gc) throws SlickException {
+	private void handleProjectile(GameContainer gc, int delta) throws SlickException {
 		if(gc.getInput().isKeyPressed(Input.KEY_C))
 		{
 			fireShot();
@@ -216,11 +216,11 @@ public class GameplayState extends BasicGameState {
 			Projectile shot = projList.get(i);
 			if(shot.projDir)//move right
 			{
-				shot.projShape.setX(shot.projShape.getMinX()+shot.projSpeed);
+				shot.projShape.setX(shot.projShape.getMinX()+shot.projSpeed*delta);
 			}
 			else //move left
 			{
-				shot.projShape.setX(shot.projShape.getMinX()-shot.projSpeed);
+				shot.projShape.setX(shot.projShape.getMinX()-shot.projSpeed*delta);
 			}
 	
 			if(!entityCollisionWith(shot.projShape).equals(blockTypes.open))
@@ -250,7 +250,11 @@ public class GameplayState extends BasicGameState {
 	 * @param gc
 	 * @throws SlickException
 	 */
-	private void handleMovement(GameContainer gc) throws SlickException {
+	private void handleMovement(GameContainer gc, int delta) throws SlickException {
+		
+		float horizontalSpeed = this.horizontalSpeed*delta;
+		float verticalSpeed = this.verticalSpeed*delta;
+		float gravity = this.gravity*delta;
 		
 		if (gc.getInput().isKeyDown(Input.KEY_LEFT))
 		{	
@@ -347,10 +351,10 @@ public class GameplayState extends BasicGameState {
 	}
 
 
-	private void iterateDirection(int speed, String direction) throws SlickException{
+	private void iterateDirection(float speed, String direction) throws SlickException{
 		speed-=1;
 	
-		if(speed==0)
+		if(speed<=0)
 		{
 			if(direction.equals("down"))
 				player.setGrounded(true);
@@ -403,7 +407,7 @@ public class GameplayState extends BasicGameState {
 	 * Moves character down 'speed' units
 	 * @param speed
 	 */
-	private void moveDown(int speed) {
+	private void moveDown(float speed) {
 		float pY = player.getYPos();		
 		pY+=speed;
 		player.setYPos(pY);
@@ -413,7 +417,7 @@ public class GameplayState extends BasicGameState {
 	 * Moves character up 'speed' units
 	 * @param speed
 	 */
-	private void moveUp(int speed){
+	private void moveUp(float speed){
 		float pY = player.getYPos();
 		pY-=speed;
 		player.setYPos(pY);
@@ -424,7 +428,7 @@ public class GameplayState extends BasicGameState {
 	 * Moves character left 'speed' units
 	 * @param speed
 	 */
-	private void moveLeft(int speed){
+	private void moveLeft(float speed){
 		float pX = player.getXPos();
 		pX-=speed;
 		player.setXPos(pX);
@@ -434,7 +438,7 @@ public class GameplayState extends BasicGameState {
 	 * Moves character right 'speed' units
 	 * @param speed
 	 */
-	private void moveRight(int speed){
+	private void moveRight(float speed){
 		float pX = player.getXPos();
 		pX+=speed;
 		player.setXPos(pX);

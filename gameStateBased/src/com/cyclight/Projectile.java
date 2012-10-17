@@ -11,9 +11,9 @@ public class Projectile{
 	
 	Shape projShape;
 	boolean projDir;
-	int projSpeed;
+	float projSpeed;
 	
-	public Projectile(Shape shape, boolean direction, int speed)
+	public Projectile(Shape shape, boolean direction, float speed)
 	{
 		projShape=shape;
 		projSpeed=speed;

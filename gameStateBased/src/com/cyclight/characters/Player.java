@@ -163,15 +163,15 @@ public class Player extends GameCharacter {
 	 * to the player's projectileList
 	 * 
 	 * @param direction
-	 * @param speed
+	 * @param projectileSpeed
 	 */
-	public void addProjectile(boolean direction, int speed) {
+	public void addProjectile(boolean direction, float projectileSpeed) {
 		Circle shot; 
 		if(direction)
 			shot = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
 		else
 			shot = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
-		projectileList.add(new Projectile(shot, direction, speed));
+		projectileList.add(new Projectile(shot, direction, projectileSpeed));
 		numProjectiles=projectileList.size();
 	}
 	
