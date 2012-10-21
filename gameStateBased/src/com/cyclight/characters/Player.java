@@ -15,7 +15,9 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
 
+import com.cyclight.BasicGun;
 import com.cyclight.Projectile;
+import com.cyclight.VGun;
 import com.cyclight.Weapon;
 
 public class Player extends GameCharacter {
@@ -35,11 +37,10 @@ public class Player extends GameCharacter {
 	float health = 100;
 	SpriteSheet spriteSheet;
 	ArrayList<Projectile> projectileList= new ArrayList<Projectile>();
-	private int numProjectiles=projectileList.size();
-	private int maxProjectiles=3;
 	private int currentWeapon;
 	//Weapons currently unimplemented
 	private ArrayList<Weapon> weaponList;
+	float projectileSpeed= 2.75f*0.18f;
 	
 	/**
 	 * Create a 'Player'
@@ -61,6 +62,8 @@ public class Player extends GameCharacter {
 			animation.addFrame(sheet.getSprite(0, 0), 150);
 		}*/
 		weaponList = new ArrayList<Weapon>();
+		weaponList.add(new VGun(null, null)); //Change this line to switch weapons
+		currentWeapon = 0;
 		spriteSheet=sheet;
 		
 		
@@ -166,23 +169,20 @@ public class Player extends GameCharacter {
 	 * @param projectileSpeed
 	 */
 	public void addProjectile(boolean direction, float projectileSpeed) {
-		Circle shot; 
-		if(direction)
-			shot = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
-		else
-			shot = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
-		projectileList.add(new Projectile(shot, direction, projectileSpeed));
-		numProjectiles=projectileList.size();
+		
 	}
 	
 	/**
-	 * Removes given projectile from projectileArray
-	 * @param numProj
+	 * If able, adds a projectile with the weapon's properties
+	 * to the player's projectileList
 	 */
-	public void removeProjectile(int numProj)
-	{
-		projectileList.remove(numProj);
-		numProjectiles=projectileList.size();
+	public void weaponAttack() {
+		Weapon curWeapon = getWeapon();
+		if(canAct() && curWeapon.canAttack())
+		{
+			addProjectile(getFacing(), projectileSpeed);
+			curWeapon.attack(projectileList, hitbox, facing);
+		}
 	}
 
 	/**
@@ -204,28 +204,11 @@ public class Player extends GameCharacter {
 	}
 
 	/**
-	 * Returns number of projectiles
-	 * @return numProjectiles
-	 */
-	public int getNumProjectiles() {
-		return numProjectiles;
-	}
-
-	/**
 	 * Returns projectileList
 	 * @return projectileList
 	 */
 	public ArrayList<Projectile> getProjectileList() {
 		return projectileList;
-	}
-	
-	/**
-	 * Returns maxProjectiles
-	 * @return maxProjectiles
-	 */
-	public int getMaxProjectiles()
-	{
-		return maxProjectiles;
 	}
 
 	/**
@@ -246,5 +229,15 @@ public class Player extends GameCharacter {
 			
 			return spriteSheet.getSprite(1, 0);
 		}
+	}
+	
+	/**
+	 * Indicates whether the player is ready to do something.
+	 * Might return false if the player is stunned or too busy swinging a weapon.
+	 * @return True iff the player can do something.
+	 */
+	public boolean canAct()
+	{
+		return true;
 	}
 }

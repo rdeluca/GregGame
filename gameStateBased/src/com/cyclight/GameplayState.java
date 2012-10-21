@@ -43,7 +43,6 @@ public class GameplayState extends BasicGameState {
 	float verticalSpeed =0.3f;   //Hardcoded but doesn't really mean anything
 	float horizontalSpeed = 0.18f; //Hardcoded but doesn't really mean anything
 	float gravity = verticalSpeed;
-	float projectileSpeed= 2.75f*horizontalSpeed;
 	ArrayList<Enemy> activeEnemyList;
 	ArrayList<Enemy> enemyList;
 	Image backgroundImage;
@@ -105,6 +104,8 @@ public class GameplayState extends BasicGameState {
 		//draw the character
 	//	g.drawAnimation(player.getAnimation(), player.getXPos(), player.getYPos());
 		
+		//we should probably have a player.render method that takes gc, sbg, and g as args, then draws the player
+		//it would also call the weapon's render method
 		g.drawImage(player.getSprite(), player.getXPos(),player.getYPos());
 		//draw the projectiles on screen
 		for(Projectile shot: player.getProjectileList())
@@ -114,18 +115,11 @@ public class GameplayState extends BasicGameState {
 		
 		int i=0;
 
-		System.out.println("Enemy List Size:"+activeEnemyList.size());
+		//System.out.println("Enemy List Size:"+activeEnemyList.size());
 		for(Enemy enemy : activeEnemyList)
 		{	
 			g.drawImage(enemy.getSprite(), enemy.getXPos(), enemy.getYPos());
 			System.out.println(enemy.getSprite() +","+ enemy.getXPos()+","+ enemy.getYPos());
-		}
-		
-		
-//		if(player.getWeapon().isActive())
-		{
-			//draw that weapon!
-			//And animate it and stuff.
 		}
 	}
 
@@ -166,9 +160,10 @@ public class GameplayState extends BasicGameState {
 		{
 			debug=false;
 		}
-		handleProjectile(gc, delta);
-		//handleWeapon(gc);
-		
+		if(gc.getInput().isKeyPressed(Input.KEY_C))
+		{
+			player.weaponAttack();
+		}
 		
 		//------------------ Do stuff with enemies -------------------//
 		if(gc.getInput().isKeyPressed((Input.KEY_1)))
@@ -183,6 +178,10 @@ public class GameplayState extends BasicGameState {
 			}
 		}
 		
+		//------------------ Other passage of time things ------------//
+		handleProjectiles(gc, delta);
+		player.getWeapon().update(delta);
+		
 	/*	
 		for(Enemy enemy: enemies)
 		{
@@ -192,28 +191,19 @@ public class GameplayState extends BasicGameState {
 	}
 
 
-	//Weapon unimplemented at this time
-	private void handleWeapon(GameContainer gc) {
-		player.getWeapon();
-	}
-
-	
 	/**
 	 * See if you're supposed to be firing projectiles, if so fire, then animate all projectiles
 	 * @param gc
 	 * @throws SlickException
 	 */
-	private void handleProjectile(GameContainer gc, int delta) throws SlickException {
-		if(gc.getInput().isKeyPressed(Input.KEY_C))
-		{
-			fireShot();
-		}
-		
+	private void handleProjectiles(GameContainer gc, int delta) throws SlickException {
 		//For each existing projectile
 		ArrayList<Projectile> projList = player.getProjectileList();
 		for(int i=0; i < projList.size();i++)
 		{
 			Projectile shot = projList.get(i);
+			shot.update(delta);
+			/*
 			if(shot.projDir)//move right
 			{
 				shot.projShape.setX(shot.projShape.getMinX()+shot.projSpeed*delta);
@@ -222,10 +212,11 @@ public class GameplayState extends BasicGameState {
 			{
 				shot.projShape.setX(shot.projShape.getMinX()-shot.projSpeed*delta);
 			}
+			*/
 	
 			if(!entityCollisionWith(shot.projShape).equals(blockTypes.open))
 			{ //if it hit anything remove the shot
-				player.removeProjectile(i);
+				projList.remove(i);
 			}
 			
 		}
@@ -234,16 +225,6 @@ public class GameplayState extends BasicGameState {
 	}
 	
 	/**
-	 * Fires the shot
-	 */
-	private void fireShot() {
-		if(player.getNumProjectiles()<player.getMaxProjectiles())
-		{
-			player.addProjectile(player.getFacing(), projectileSpeed);
-		}
-	}
-
-	/**
 	 * For character movement.
 	 * Figure out direction and handle collisions.
 	 *  
@@ -251,7 +232,6 @@ public class GameplayState extends BasicGameState {
 	 * @throws SlickException
 	 */
 	private void handleMovement(GameContainer gc, int delta) throws SlickException {
-		
 		float horizontalSpeed = this.horizontalSpeed*delta;
 		float verticalSpeed = this.verticalSpeed*delta;
 		float gravity = this.gravity*delta;
