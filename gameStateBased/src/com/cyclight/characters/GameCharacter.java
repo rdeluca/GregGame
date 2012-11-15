@@ -3,25 +3,26 @@
  * All the stuff that both those classes will share because that's good software development practices.
  */
 
-package com.cyclight.characters;
+package com.cyclight;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Polygon;
+
 
 public abstract class GameCharacter {
 
-	float xPos = 0;
-	float yPos = 0;
+
 	Animation animation = null;
 	Polygon hitbox = null;
 
 	public float getXPos() {
-		return xPos;
+		return hitbox.getX();
 	}
 
 	public float getYPos() {
-		return yPos;
+		return hitbox.getY();
 	}
 
 	public Polygon getHitbox() {
@@ -33,19 +34,36 @@ public abstract class GameCharacter {
 	}
 
 	public void setXPos(float x) {
-		hitbox.setX(x);
-		xPos = x;
+		hitbox.setLocation(x, getYPos());
 	}
 
 	public void setYPos(float y) {
-		hitbox.setY(y);
-		yPos = y;
+		hitbox.setLocation(getXPos(), y);
 	}
 
 	public void setHitbox(Polygon hitbox) {
 		this.hitbox = hitbox;
 	}
 	
+	/**
+	 * Creates a hitbox at given coordinates 
+	 * and of given size
+	 * 
+	 * @param x coord
+	 * @param y coord
+	 * @param width
+	 * @param height 
+	 */
+	public void setHitbox(float x, float y, float width, float height)
+	{
+		Polygon pp = new Polygon(new float[] { x, y, x + height, y, x + height,
+				y + width, x, y + width});
+		this.hitbox=pp;
+	}
+	
+
+	
 	public abstract Image getSprite();
 
+	public abstract void onUpdate(Input input);
 }

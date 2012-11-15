@@ -1,20 +1,20 @@
-/**
- * 
- * Player class. This is where I store all the stuff about the player.
- * 
+/** 
+ * Player class. This is where I store all the stuff about the 
+ * player
  * 
  */
 
-package com.cyclight.characters;
+package com.cyclight;
 
 import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
-
 import com.cyclight.BasicGun;
 import com.cyclight.Projectile;
 import com.cyclight.VGun;
@@ -37,7 +37,19 @@ public class Player extends GameCharacter {
 	float health = 100;
 	SpriteSheet spriteSheet;
 	ArrayList<Projectile> projectileList= new ArrayList<Projectile>();
+	private int numProjectiles=projectileList.size();
+	private int maxProjectiles=3;
 	private int currentWeapon;
+
+	int charHeight = 18;
+	int charWidth = 32;
+	int verticalSpeed = 5;   //Hardcoded but doesn't really mean anything
+	int horizontalSpeed = 3; //Hardcoded but doesn't really mean anything
+	int gravity = verticalSpeed;
+	
+	collisionHandler collisionHandler;
+
+	
 	//Weapons currently unimplemented
 	private ArrayList<Weapon> weaponList;
 	float projectileSpeed= 2.75f*0.18f;
@@ -50,10 +62,27 @@ public class Player extends GameCharacter {
 	 * @param pa	- Player's animation
 	 * @param sheet	- Player's spriteSheet
 	 */
-	public Player(int x, int y, Polygon pp, Animation pa, SpriteSheet sheet) {
-		xPos = x;
-		yPos = y;
-		hitbox = pp;
+	public Player(int startX, int startY, Animation pa) {
+		
+		
+		//If I were to ever to animate the sprite rather than have a static block this would be useful
+		Image gregImage = null;
+		try {
+			// gregImage = new Image("res/gregSheet.png");
+			gregImage = new Image("res/square.png");
+
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		SpriteSheet sheet = new SpriteSheet(gregImage, charHeight, charWidth);
+		//Create a 'hitbox' polygon
+		hitbox = new Polygon(new float[] { 0, 0, charHeight, 0,
+				charHeight, charWidth, 0, charWidth});
+		
+		hitbox.setX(startX);
+		hitbox.setY(startY);
 		animation = pa;
 		animation.setAutoUpdate(true);
 		status = playerStatus.none;
@@ -65,8 +94,10 @@ public class Player extends GameCharacter {
 		weaponList.add(new VGun(null, null)); //Change this line to switch weapons
 		currentWeapon = 0;
 		spriteSheet=sheet;
+
+		collisionHandler = com.cyclight.collisionHandler.getInstance();
 		
-		
+
 	}
 	
 	/*
@@ -96,7 +127,7 @@ public class Player extends GameCharacter {
 	 * Is character grounded?
 	 * @return
 	 */
-	public boolean isGrounded()
+	public boolean getGrounded()
 	{
 		return grounded;
 	}
@@ -169,13 +200,19 @@ public class Player extends GameCharacter {
 	 * @param projectileSpeed
 	 */
 	public void addProjectile(boolean direction, float projectileSpeed) {
-		
+		Circle shot; 
+		if(direction)
+			shot = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
+		else
+			shot = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
+		projectileList.add(new Projectile(shot, direction, speed));
+		numProjectiles=projectileList.size();
 	}
 	
-	/**
+ 	/**
 	 * If able, adds a projectile with the weapon's properties
 	 * to the player's projectileList
-	 */
+ 	 */
 	public void weaponAttack() {
 		Weapon curWeapon = getWeapon();
 		if(canAct() && curWeapon.canAttack())
@@ -183,7 +220,6 @@ public class Player extends GameCharacter {
 			addProjectile(getFacing(), projectileSpeed);
 			curWeapon.attack(projectileList, hitbox, facing);
 		}
-	}
 
 	/**
 	 * Sets player's facing to given boolean
@@ -204,11 +240,28 @@ public class Player extends GameCharacter {
 	}
 
 	/**
+	 * Returns number of projectiles
+	 * @return numProjectiles
+	 */
+	public int getNumProjectiles() {
+		return numProjectiles;
+	}
+
+	/**
 	 * Returns projectileList
 	 * @return projectileList
 	 */
 	public ArrayList<Projectile> getProjectileList() {
 		return projectileList;
+	}
+	
+	/**
+	 * Returns maxProjectiles
+	 * @return maxProjectiles
+	 */
+	public int getMaxProjectiles()
+	{
+		return maxProjectiles;
 	}
 
 	/**
@@ -236,8 +289,135 @@ public class Player extends GameCharacter {
 	 * Might return false if the player is stunned or too busy swinging a weapon.
 	 * @return True iff the player can do something.
 	 */
-	public boolean canAct()
-	{
+	 public boolean canAct()
+	 {
+		//ToDo: Change When Stun Implemented
 		return true;
 	}
+	
+	/**
+	 * For character movement.
+	 * Figure out direction and handle collisions.
+	 * @param arrayList 
+	 *  
+	 * @param Input - the Game Container's input.
+	 * @throws SlickException
+	 */
+	private void handleMovement(Input input) {
+
+		if (input.isKeyDown(Input.KEY_LEFT))
+		{	
+			setFacing(false);
+			if (!collisionHandler.checkCollisionDirection(horizontalSpeed, "left", this.getHitbox()))
+			{
+				collisionHandler.move(hitbox, "left", horizontalSpeed);
+			}
+			else
+			{
+				collisionHandler.closeGap(hitbox, "left");
+			}
+
+		}
+		if (input.isKeyDown(Input.KEY_RIGHT))
+		{
+			setFacing(true);
+			if (!collisionHandler.checkCollisionDirection(horizontalSpeed, "right", this.getHitbox()))
+			{
+				collisionHandler.move(hitbox, "right", horizontalSpeed);
+			}
+			else
+			{
+				collisionHandler.closeGap(hitbox, "right");
+			}
+		}
+		if (input.isKeyDown(Input.KEY_Z))
+		{
+			if(getGrounded())
+			{ 
+				//Not jumping, start jump
+
+				setGrounded(false);
+				jumpCountdown(1);		
+
+				if (!collisionHandler.checkCollisionDirection(verticalSpeed, "up", this.getHitbox()))
+				{
+					setJumping(true);
+					collisionHandler.move(hitbox, "up", verticalSpeed);
+				}
+				else
+				{
+					setJumping(false);					
+					collisionHandler.closeGap(hitbox, "up");
+				}
+
+			}
+			else if(isJumping() && !getGrounded())
+			{
+				//In the air, jumping
+				jumpCountdown(1);	
+					
+				if (!collisionHandler.checkCollisionDirection(verticalSpeed, "up", this.getHitbox()))
+				{
+					if(getJumpCounter()<=0)
+					{
+						setJumping(false);
+					}
+					collisionHandler.move(hitbox, "up", verticalSpeed);
+				}
+				else
+				{
+					setJumping(false);					
+					collisionHandler.closeGap(hitbox, "up");
+				}
+			}
+			else if(!isJumping() && !getGrounded())
+			{
+				//Falling 
+				//Let gravity do its thing.
+			}
+		}
+		else if(isJumping())
+		{
+			setJumping(false);
+		}
+
+		// GRAVITY!
+		if( !getGrounded() && !isJumping())
+		{
+			// Mid-air and not holding JUMP
+			if (!collisionHandler.checkCollisionDirection(gravity, "down", this.getHitbox()))
+			{
+				collisionHandler.move(hitbox, "down", gravity);
+			}
+			else
+			{
+				collisionHandler.closeGap(hitbox, "down");
+				setGrounded(true);				
+			}
+		}
+		if(getGrounded()) 
+		{ 
+			if (!collisionHandler.checkCollisionDirection(gravity, "down", this.getHitbox()))
+			{
+				// If 'grounded' and in the air - then fall more
+				collisionHandler.move(hitbox, "down", gravity);
+			}
+			else
+			{
+				collisionHandler.closeGap(hitbox, "down");
+				setGrounded(true);
+			}
+		}
+		if (input.isKeyDown(Input.KEY_DOWN))
+		{
+			//This should crouch or something at some time.
+		}
+	}
+
+	@Override
+	public void onUpdate(Input input) {
+		// TODO Auto-generated method stub
+		handleMovement(input);
+	}
+	
 }

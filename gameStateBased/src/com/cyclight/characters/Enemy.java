@@ -1,15 +1,14 @@
-package com.cyclight.characters;
+package com.cyclight;
 
 import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
 
-import com.cyclight.Projectile;
-import com.cyclight.Weapon;
 
 public class Enemy extends GameCharacter {
 
@@ -34,9 +33,11 @@ public class Enemy extends GameCharacter {
 	private ArrayList<Weapon> weaponList;
 	
 	public Enemy(int x, int y, Polygon pp, Animation pa, SpriteSheet sheet, EnemyAI ai ) {
-		xPos = x;
-		yPos = y;
+
 		hitbox = pp;
+
+		setXPos(x);
+		setYPos(y);
 		animation = pa;
 		animation.setAutoUpdate(true);
 		status = enemyStatus.none;
@@ -103,20 +104,17 @@ public class Enemy extends GameCharacter {
 		jumpCounter=jcount;
 	}
 	
-	public void setXPos(float x)
-	{
-		this.xPos=x;
-	}
-	
-	public void setYPos(float y)
-	{
-		this.yPos=y;
-	}
-	
+
 	public void setCoords(float x, float y) {
-		this.xPos=x;
-		this.yPos=y;
+		setXPos(x);
+		setYPos(y);
+		// setHitbox(x, y, spriteSheet.getHeight(), spriteSheet.getWidth());
+		
+		
+		
 	}
+	
+	
 	
 	public void addProjectile(boolean direction, int speed) {
 		Circle shot; 
@@ -161,38 +159,36 @@ public class Enemy extends GameCharacter {
 	}
 
 	public void checkActive(float PlayerXPos, float PlayerYPos) {
-		boolean activate = false;
+		
 		switch (this.AItype.type)
 		{
-		case wander:
-			float height = this.hitbox.getHeight();
-			float max = this.getYPos()+height;
-			float min = this.getYPos()-31;
-			
-			if(this.facing){
-				// true right  E->     M
-				if(PlayerYPos<max && PlayerYPos>min)
-				{
-						AItype.setActive(true);
-				}
-				else {
+			case wander:
+				float height = this.hitbox.getHeight();
+				float max = this.getYPos()+height;
+				float min = this.getYPos()-31;
+				
+				if(this.facing){
+					// true right  E->     M
+					if(PlayerYPos<max && PlayerYPos>min)
+					{
+							AItype.setActive(true);
+					}
+					else {
+						
+					}
 					
+				}
+				else {//false left
+					if(this.getXPos()>PlayerXPos)
+					{	
+					}				
 				}
 				
-
-			}
-			else {//false left
-				if(this.getXPos()>PlayerXPos)
-				{
-					
-				}				
-			}
-			
-			break;
-		case statue:
-			break;
-		case ghost:
-			break;
+				break;
+			case statue:
+				break;
+			case ghost:
+				break;
 		}	
 	}
 	
@@ -217,4 +213,16 @@ public class Enemy extends GameCharacter {
 		// TODO Auto-generated method stub
 		return AItype;
 	}
+	
+
+	public void onUpdate() {
+	}
+
+	@Override
+	public void onUpdate(Input input) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }
