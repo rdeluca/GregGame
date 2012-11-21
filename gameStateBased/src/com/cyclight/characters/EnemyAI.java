@@ -1,4 +1,4 @@
-package com.cyclight;
+package com.cyclight.characters;
 
 public class EnemyAI{
 	

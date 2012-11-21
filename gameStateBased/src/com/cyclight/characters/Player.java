@@ -4,7 +4,7 @@
  * 
  */
 
-package com.cyclight;
+package com.cyclight.characters;
 
 import java.util.ArrayList;
 
@@ -16,6 +16,7 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
 import com.cyclight.BasicGun;
+import com.cyclight.collisionHandler;
 import com.cyclight.Projectile;
 import com.cyclight.VGun;
 import com.cyclight.Weapon;
@@ -205,7 +206,7 @@ public class Player extends GameCharacter {
 			shot = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
 		else
 			shot = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
-		projectileList.add(new Projectile(shot, direction, speed));
+		projectileList.add(new Projectile(shot, direction, projectileSpeed));
 		numProjectiles=projectileList.size();
 	}
 	
@@ -220,6 +221,7 @@ public class Player extends GameCharacter {
 			addProjectile(getFacing(), projectileSpeed);
 			curWeapon.attack(projectileList, hitbox, facing);
 		}
+	}
 
 	/**
 	 * Sets player's facing to given boolean
@@ -415,7 +417,7 @@ public class Player extends GameCharacter {
 	}
 
 	@Override
-	public void onUpdate(Input input) {
+	public void onUpdate(Input input, int delta) {
 		// TODO Auto-generated method stub
 		handleMovement(input);
 	}

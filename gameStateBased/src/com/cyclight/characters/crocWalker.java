@@ -1,4 +1,4 @@
-package com.cyclight;
+package com.cyclight.characters;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
@@ -6,7 +6,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Polygon;
 
-import com.cyclight.EnemyAI.AIType;
+import com.cyclight.characters.EnemyAI.AIType;
 
 
 

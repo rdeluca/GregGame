@@ -1,4 +1,4 @@
-package com.cyclight;
+package com.cyclight.characters;
 
 import java.util.ArrayList;
 
@@ -8,6 +8,9 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
+
+import com.cyclight.Projectile;
+import com.cyclight.Weapon;
 
 
 public class Enemy extends GameCharacter {
@@ -219,7 +222,7 @@ public class Enemy extends GameCharacter {
 	}
 
 	@Override
-	public void onUpdate(Input input) {
+	public void onUpdate(Input input, int delta) {
 		// TODO Auto-generated method stub
 		
 	}

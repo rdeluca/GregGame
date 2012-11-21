@@ -222,16 +222,6 @@ public class GameplayState extends BasicGameState {
 		
 		
 	}
-	
-	/**
-	 * Fires the shot
-	 */
-	private void fireShot() {
-		if(player.getNumProjectiles()<player.getMaxProjectiles())
-		{
-			player.addProjectile(player.getFacing(), projectileSpeed);
-		}
-	}
 
 
 

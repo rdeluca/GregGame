@@ -3,7 +3,7 @@
  * All the stuff that both those classes will share because that's good software development practices.
  */
 
-package com.cyclight;
+package com.cyclight.characters;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
@@ -65,5 +65,5 @@ public abstract class GameCharacter {
 	
 	public abstract Image getSprite();
 
-	public abstract void onUpdate(Input input);
+	public abstract void onUpdate(Input input, int delta);
 }
