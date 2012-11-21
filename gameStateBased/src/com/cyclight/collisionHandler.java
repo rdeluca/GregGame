@@ -8,7 +8,7 @@ import org.newdawn.slick.geom.Shape;
 
 public class collisionHandler
 {
-	private static BlockMap map;
+	private BlockMap map;
 
 	public collisionHandler()
 	{
@@ -60,7 +60,7 @@ public class collisionHandler
 	 * @return collidedBlocks
 	 * @throws SlickException
 	 */
-	public static boolean[] directionalCollision(Shape hitbox)
+	public boolean[] directionalCollision(Shape hitbox)
 	{
 		ArrayList<Block> blocks = getCollisionBlockList(hitbox);
 		boolean[] collidedBlocks = { false, false, false, false };
@@ -99,7 +99,7 @@ public class collisionHandler
 	 * 
 	 * @return collidedBlocks
 	 */
-	public static ArrayList<Block> getCollisionBlockList(Shape hb)
+	public  ArrayList<Block> getCollisionBlockList(Shape hb)
 	{
 		ArrayList<Block> bList = new ArrayList<Block>();
 
@@ -131,16 +131,24 @@ public class collisionHandler
 		return map;
 	}
     
-    public void setMap(BlockMap map) {
-		collisionHandler.map = map;
+    public void setMap(BlockMap Bmap) {
+		map = Bmap;
 	}
 
-	public static boolean collidingWithBlocks(Shape projShape) {
+    /**
+     * Checks to see if given shape is colliding with blocks
+     * 
+     * @param projShape - Hitbox to check collision against
+     * 
+     * @return collision 
+     */
+	public boolean collidingWithBlocks(Shape projShape) {
 		boolean collision = false;
 
 		boolean[] boolList = directionalCollision(projShape);
 
-		for (boolean bool : boolList) {
+		for (boolean bool : boolList) 
+		{
 			if (bool)
 				collision = true;
 		}
@@ -167,7 +175,7 @@ public class collisionHandler
 
 		move(hitbox, direction, moveNum);
 
-		// TODO: Make it so that grounded is calculated independantly rather
+		// TODO: Make it so that grounded is calculated independently rather
 		// than here
 		if (direction.equals("down"))
 			return true;

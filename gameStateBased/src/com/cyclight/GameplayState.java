@@ -54,7 +54,6 @@ public class GameplayState extends BasicGameState {
 	public GameplayState(String title) {
 		super();
 	}
-
 	
 	//
 	@Override
@@ -65,10 +64,12 @@ public class GameplayState extends BasicGameState {
 			backgroundImage = new Image("res/Bgrnd.png");
 			
 			player = new Player(startX, startY, new Animation());
-			loadEnemies();
-			
 
-			map = new BlockMap("res/level/map.tmx");
+			//			loadEnemies();
+			activeEnemyList = new ArrayList<Enemy>();
+			
+			
+			map = new BlockMap("res/level/ArenaMap.tmx");
 			cHandler = collisionHandler.getInstance();
 			cHandler.setMap(map);
 		}
@@ -91,8 +92,6 @@ public class GameplayState extends BasicGameState {
 
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
-		
-		
 		g.drawImage(backgroundImage, 0, 0);
 		//Render the map
 		map.getTiledMap().render(0, 0, 1);
@@ -109,16 +108,12 @@ public class GameplayState extends BasicGameState {
 			g.draw(shot.projShape);	
 		}
 		
-		for(Enemy enemy : activeEnemyList)
-		{	
-			g.drawImage(enemy.getSprite(), enemy.getXPos(), enemy.getYPos());
-		}
-		
-		
-//		if(player.getWeapon().isActive())
+		if(activeEnemyList != null)
 		{
-			//draw that weapon!
-			//And animate it and stuff.
+			for(Enemy enemy : activeEnemyList)
+			{	
+				g.drawImage(enemy.getSprite(), enemy.getXPos(), enemy.getYPos());
+			}
 		}
 	}
 
@@ -141,9 +136,6 @@ public class GameplayState extends BasicGameState {
 			}	
 		}
 
-		//-------------------  DIRECTIONAL INPUT -------------------------//
-		player.onUpdate(gc.getInput(), delta);		
-
 		//------------------ OTHER KEYBOARD INPUT ---------------------//
 		if (gc.getInput().isKeyDown(Input.KEY_ESCAPE))
 		{
@@ -162,11 +154,33 @@ public class GameplayState extends BasicGameState {
 			player.weaponAttack();
 		}
 		
-		//------------------ Do stuff with enemies -------------------//
+		
+
+		//-------------------  PLAYER INPUT -------------------------//
+		player.onUpdate(gc.getInput(), delta);		
+				
+		
+		
+		//-------------------  ENEMY UPDATE -------------------//
 		if(gc.getInput().isKeyPressed((Input.KEY_1)))
-		{/*
-			Enemy enemy = enemyList.get(0);
+		{
+			Enemy enemy = new crocWalker();
 			
+			enemy.setCoords(gc.getInput().getMouseX(), gc.getInput().getMouseY());
+			System.out.println(gc.getInput().getMouseX());
+			
+			if(cHandler.collidingWithBlocks(enemy.getHitbox()))
+			{
+				//if Colliding don't add it
+				
+			}
+			else
+			{ 
+				//Not Colliding add em in
+				activeEnemyList.add(enemy);
+			}
+			
+			/*	
 			Enemy crocEnemy = new Enemy(gc.getInput().getMouseX(), gc.getInput().getMouseY(), enemy.getHitbox(), enemy.getAnimation(), enemy.getSpriteSheet(), enemy.getAI());
 			if(entityCollisionWith(crocEnemy.getHitbox()).equals(blockTypes.open))
 			{
@@ -175,16 +189,21 @@ public class GameplayState extends BasicGameState {
 			}*/
 		}
 		
+		if(activeEnemyList!=null)
+		{
+			for(Enemy enemy: activeEnemyList)
+			{
+				enemy.onUpdate(gc.getInput(), delta);
+			}
+		}
+	
+		
 		//------------------ Other passage of time things ------------//
 		handleProjectiles(gc, delta);
 		player.getWeapon().update(delta);
 		
-	/*	
-		for(Enemy enemy: enemies)
-		{
-			enemy.onUpdate();
-		}
-		*/
+		
+
 	}
 
 
@@ -222,36 +241,19 @@ public class GameplayState extends BasicGameState {
 		
 		
 	}
-
-
-
-/**
- * Given a shape (assumed a rectangle) hb (hitbox), 
- * return an array of the blocks that the corners collide with 
- * 
- * @param hb
- * @return ArrayList<Block> blocksCollidedWith
- */
-	public ArrayList<Block> getCollisionBlockList(Shape hb)
+	
+	/**
+	 * Fires the shot
+	 */
+	private void fireShot()
 	{
-		ArrayList<Block> bList = new ArrayList<Block>();
-
-		Coordinates [] coords= new Coordinates[4];
-		
-		coords[0] = new Coordinates((float)Math.floor(hb.getMinX()/32), (float)Math.floor(hb.getMinY()/32));
-		coords[1] = new Coordinates((float)Math.floor(hb.getMaxX()/32), (float)Math.floor(hb.getMinY()/32));
-		coords[2] = new Coordinates((float)Math.floor(hb.getMaxX()/32), (float)Math.floor(hb.getMaxY()/32));
-		coords[3] = new Coordinates((float)Math.floor(hb.getMinX()/32), (float)Math.floor(hb.getMaxY()/32));
-		
-		//For each corner of the block see what block it's in
-		for(int i=0; i <4; i++)
+		if(player.getNumProjectiles()<player.getMaxProjectiles())
 		{
-			Block e = map.get((int) coords[i].x, (int) coords[i].y);
-			bList.add(e);
+			player.addProjectile(player.getFacing(), projectileSpeed);
 		}
-		
-		return bList;
 	}
+
+
 
 	// IMPORTANT - if auto-gen'd by eclipse this is set to 0. You have to keep it at -1 or you'll
 	// get some stupid error that makes no sense.

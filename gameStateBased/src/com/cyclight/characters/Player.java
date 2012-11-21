@@ -16,10 +16,10 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
 import com.cyclight.BasicGun;
-import com.cyclight.collisionHandler;
 import com.cyclight.Projectile;
 import com.cyclight.VGun;
 import com.cyclight.Weapon;
+import com.cyclight.collisionHandler;
 
 public class Player extends GameCharacter {
 
@@ -44,9 +44,10 @@ public class Player extends GameCharacter {
 
 	int charHeight = 18;
 	int charWidth = 32;
-	int verticalSpeed = 5;   //Hardcoded but doesn't really mean anything
-	int horizontalSpeed = 3; //Hardcoded but doesn't really mean anything
-	int gravity = verticalSpeed;
+	float verticalSpeed =0.3f;   //Hardcoded but doesn't really mean anything
+	float horizontalSpeed = 0.18f; //Hardcoded but doesn't really mean anything
+	float gravity = verticalSpeed;
+
 	
 	collisionHandler collisionHandler;
 
@@ -218,11 +219,10 @@ public class Player extends GameCharacter {
 		Weapon curWeapon = getWeapon();
 		if(canAct() && curWeapon.canAttack())
 		{
-			addProjectile(getFacing(), projectileSpeed);
 			curWeapon.attack(projectileList, hitbox, facing);
 		}
 	}
-
+	
 	/**
 	 * Sets player's facing to given boolean
 	 * @param b
@@ -300,13 +300,17 @@ public class Player extends GameCharacter {
 	/**
 	 * For character movement.
 	 * Figure out direction and handle collisions.
+	 * @param delta 
 	 * @param arrayList 
 	 *  
 	 * @param Input - the Game Container's input.
 	 * @throws SlickException
 	 */
-	private void handleMovement(Input input) {
-
+	private void handleMovement(Input input, int delta) {
+		float horizontalSpeed = this.horizontalSpeed*delta;
+		float verticalSpeed = this.verticalSpeed*delta;
+		float gravity = this.gravity*delta;
+		
 		if (input.isKeyDown(Input.KEY_LEFT))
 		{	
 			setFacing(false);
@@ -419,7 +423,7 @@ public class Player extends GameCharacter {
 	@Override
 	public void onUpdate(Input input, int delta) {
 		// TODO Auto-generated method stub
-		handleMovement(input);
+		handleMovement(input, delta);
 	}
 	
 }
