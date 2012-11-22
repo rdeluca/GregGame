@@ -1,3 +1,8 @@
+/**
+ * Mostly unimplimented, for equipping different weapons that aren't a projectile attack
+ * 
+ */
+
 package com.cyclight;
 
 import java.util.ArrayList;
@@ -8,24 +13,25 @@ import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Shape;
 
-public class VGun implements Weapon {
-			
-	private String weaponName= "V-Bow";
+public class PiercingGun implements Weapon {
+	
+	private String weaponName= "crossbow";
 	private Shape weaponHitbox;
 	private Animation weaponAnimation;
 	private final int delay = 300;
 	private int currentDelay;
-	private int numPierce=1;
+	private int numPiercing;
+	
 	private final float projectileSpeed = .5f;
-	private final float projectileYSpeed = .1f;
 	//damage?
-//			private boolean active;
+//	private boolean active;
 	//Tween movement;
 	
-	public VGun(Shape shape, SpriteSheet sheet)
+	public PiercingGun(Shape shape, SpriteSheet sheet)
 	{
+		numPiercing=3;
 		currentDelay = 0;
-//				active=false;
+//		active=false;
 		//weaponHitbox=shape;
 		for (int frame = 0; frame < 3; frame++)
 		{
@@ -41,19 +47,12 @@ public class VGun implements Weapon {
 	public int attack(ArrayList<Projectile> projList, Polygon hitbox, boolean direction)
 	{
 		currentDelay = delay;
-		Circle shot, shot2; 
+		Circle shot; 
 		if(direction)
-			{
 			shot = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
-			shot2 = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
-			}
 		else
-			{
 			shot = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
-			shot2 = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
-			}
-		projList.add(new Projectile(shot, direction, projectileSpeed, -projectileYSpeed, numPierce));
-		projList.add(new Projectile(shot2, direction, projectileSpeed, projectileYSpeed, numPierce));
+		projList.add(new Projectile(shot, direction, projectileSpeed, numPiercing));
 		return 0;
 	}
 	
@@ -67,7 +66,7 @@ public class VGun implements Weapon {
 		if(currentDelay > 0)
 			currentDelay -= delta;
 	}
-	
+
 	@Override
 	public String getName() {
 		return weaponName;
@@ -75,6 +74,7 @@ public class VGun implements Weapon {
 
 	@Override
 	public int getPiercing() {
-		return numPierce;
+		// TODO Auto-generated method stub
+		return numPiercing;
 	}
 }

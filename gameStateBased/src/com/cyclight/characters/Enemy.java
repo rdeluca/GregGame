@@ -39,10 +39,10 @@ public abstract class Enemy extends GameCharacter {
 	
 	int charHeight = 18;
 	int charWidth = 32;
+	
 	float verticalSpeed =0.3f;   //Hardcoded but doesn't really mean anything
 	float horizontalSpeed = 0.18f; //Hardcoded but doesn't really mean anything
 	float gravity = verticalSpeed;
-	
 	
 	collisionHandler cHandler;
 	
@@ -127,20 +127,19 @@ public abstract class Enemy extends GameCharacter {
 		setXPos(x);
 		setYPos(y);
 		// setHitbox(x, y, spriteSheet.getHeight(), spriteSheet.getWidth());
-		
-		
-		
 	}
 	
 	
 	
 	public void addProjectile(boolean direction, int speed) {
 		Circle shot; 
+		
+		//TODO: What's this if statement for?
 		if(direction)
 			shot = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
 		else
 			shot = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
-		projectileList.add(new Projectile(shot, direction, speed));
+		projectileList.add(new Projectile(shot, direction, speed, 1));
 		numProjectiles=projectileList.size();
 	}
 	
@@ -157,10 +156,6 @@ public abstract class Enemy extends GameCharacter {
 	public boolean getFacing()
 	{
 		return facing;
-	}
-
-	public int getNumProjectiles() {
-		return numProjectiles;
 	}
 
 	public ArrayList<Projectile> getProjectileList() {
@@ -217,7 +212,6 @@ public abstract class Enemy extends GameCharacter {
 		}
 		else
 		{
-			
 			return spriteSheet.getSprite(1, 0);
 		}
 	}
@@ -248,127 +242,6 @@ public abstract class Enemy extends GameCharacter {
 		return grounded;
 	}
 
-	/**
-	 * For character movement.
-	 * Figure out direction and handle collisions.
-	 * @param delta 
-	 * @param arrayList 
-	 *  
-	 * @param Input - the Game Container's input.
-	 * @throws SlickException
-	 */
-	private void handleMovement(Input input, int delta) {
-		float horizontalSpeed = this.horizontalSpeed*delta;
-		float verticalSpeed = this.verticalSpeed*delta;
-		float gravity = this.gravity*delta;
-		
-		if (input.isKeyDown(Input.KEY_LEFT))
-		{	
-			setFacing(false);
-			if (!cHandler.checkCollisionDirection(horizontalSpeed, "left", this.getHitbox()))
-			{
-				cHandler.move(hitbox, "left", horizontalSpeed);
-			}
-			else
-			{
-				cHandler.closeGap(hitbox, "left");
-			}
-
-		}
-		if (input.isKeyDown(Input.KEY_RIGHT))
-		{
-			setFacing(true);
-			if (!cHandler.checkCollisionDirection(horizontalSpeed, "right", this.getHitbox()))
-			{
-				cHandler.move(hitbox, "right", horizontalSpeed);
-			}
-			else
-			{
-				cHandler.closeGap(hitbox, "right");
-			}
-		}
-		if (input.isKeyDown(Input.KEY_Z))
-		{
-			if(getGrounded())
-			{ 
-				//Not jumping, start jump
-
-				setGrounded(false);
-				jumpCountdown(1);		
-
-				if (!cHandler.checkCollisionDirection(verticalSpeed, "up", this.getHitbox()))
-				{
-					setJumping(true);
-					cHandler.move(hitbox, "up", verticalSpeed);
-				}
-				else
-				{
-					setJumping(false);					
-					cHandler.closeGap(hitbox, "up");
-				}
-
-			}
-			else if(isJumping() && !getGrounded())
-			{
-				//In the air, jumping
-				jumpCountdown(1);	
-					
-				if (!cHandler.checkCollisionDirection(verticalSpeed, "up", this.getHitbox()))
-				{
-					if(getJumpCounter()<=0)
-					{
-						setJumping(false);
-					}
-					cHandler.move(hitbox, "up", verticalSpeed);
-				}
-				else
-				{
-					setJumping(false);					
-					cHandler.closeGap(hitbox, "up");
-				}
-			}
-			else if(!isJumping() && !getGrounded())
-			{
-				//Falling 
-				//Let gravity do its thing.
-			}
-		}
-		else if(isJumping())
-		{
-			setJumping(false);
-		}
-
-		// GRAVITY!
-		if( !getGrounded() && !isJumping())
-		{
-			// Mid-air and not holding JUMP
-			if (!cHandler.checkCollisionDirection(gravity, "down", this.getHitbox()))
-			{
-				cHandler.move(hitbox, "down", gravity);
-			}
-			else
-			{
-				cHandler.closeGap(hitbox, "down");
-				setGrounded(true);				
-			}
-		}
-		if(getGrounded()) 
-		{ 
-			if (!cHandler.checkCollisionDirection(gravity, "down", this.getHitbox()))
-			{
-				// If 'grounded' and in the air - then fall more
-				cHandler.move(hitbox, "down", gravity);
-			}
-			else
-			{
-				cHandler.closeGap(hitbox, "down");
-				setGrounded(true);
-			}
-		}
-		if (input.isKeyDown(Input.KEY_DOWN))
-		{
-			//This should crouch or something at some time.
-		}
-	}
+	public abstract void handleMovement(Input input, int delta) ;
 
 }

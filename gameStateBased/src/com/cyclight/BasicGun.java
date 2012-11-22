@@ -15,10 +15,12 @@ import org.newdawn.slick.geom.Shape;
 
 public class BasicGun implements Weapon {
 	
+	private String weaponName= "bow";
 	private Shape weaponHitbox;
 	private Animation weaponAnimation;
-	private final int delay = 300;
 	private int currentDelay;
+	private final int delay = 300;
+	private int numPierce = 1;
 	
 	private final float projectileSpeed = .5f;
 	//damage?
@@ -49,7 +51,7 @@ public class BasicGun implements Weapon {
 			shot = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
 		else
 			shot = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
-		projList.add(new Projectile(shot, direction, projectileSpeed));
+		projList.add(new Projectile(shot, direction, projectileSpeed, numPierce));
 		return 0;
 	}
 	
@@ -62,5 +64,15 @@ public class BasicGun implements Weapon {
 	{
 		if(currentDelay > 0)
 			currentDelay -= delta;
+	}
+	
+	@Override
+	public String getName() {
+		return weaponName;
+	}
+
+	@Override
+	public int getPiercing() {
+		return numPierce;
 	}
 }

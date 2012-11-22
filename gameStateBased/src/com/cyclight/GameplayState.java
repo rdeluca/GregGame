@@ -17,13 +17,9 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.geom.Polygon;
-import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-import com.cyclight.Block.blockTypes;
 import com.cyclight.characters.Enemy;
 import com.cyclight.characters.Player;
 import com.cyclight.characters.crocWalker;
@@ -77,9 +73,9 @@ public class GameplayState extends BasicGameState {
 		{
 			System.out.println(e);
 		}
-
 	}
-
+	
+/*
 	private void loadEnemies() throws SlickException {
 		activeEnemyList = new ArrayList<Enemy>();
 		enemyList = new ArrayList<Enemy>();
@@ -87,7 +83,7 @@ public class GameplayState extends BasicGameState {
 		crocWalker crocEnemy = new crocWalker();
 		enemyList.add(crocEnemy);
 	}
-	
+	*/
 
 
 	@Override
@@ -97,7 +93,7 @@ public class GameplayState extends BasicGameState {
 		map.getTiledMap().render(0, 0, 1);
 		
 		//draw the character
-	//	g.drawAnimation(player.getAnimation(), player.getXPos(), player.getYPos());
+		//	g.drawAnimation(player.getAnimation(), player.getXPos(), player.getYPos());
 		
 		//we should probably have a player.render method that takes gc, sbg, and g as args, then draws the player
 		//it would also call the weapon's render method
@@ -167,7 +163,6 @@ public class GameplayState extends BasicGameState {
 			Enemy enemy = new crocWalker();
 			
 			enemy.setCoords(gc.getInput().getMouseX(), gc.getInput().getMouseY());
-			System.out.println(gc.getInput().getMouseX());
 			
 			if(cHandler.collidingWithBlocks(enemy.getHitbox()))
 			{
@@ -221,39 +216,36 @@ public class GameplayState extends BasicGameState {
 		{
 			Projectile shot = projList.get(i);
 			shot.update(delta);
-			/*
-			if(shot.projDir)//move right
-			{
-				shot.projShape.setX(shot.projShape.getMinX()+shot.projSpeed*delta);
-			}
-			else //move left
-			{
-				shot.projShape.setX(shot.projShape.getMinX()-shot.projSpeed*delta);
-			}
-			*/
+
 	
 			if (cHandler.collidingWithBlocks(shot.projShape))
 			{ //if it hit anything remove the shot
 				projList.remove(i);
 			}
-			
+			else
+			{
+				//TODO: Implement better way of collision checking on enemies?
+				OUTER:for(int j=0; j<activeEnemyList.size();j++)
+				{
+					Enemy enemy= activeEnemyList.get(j);
+					if(enemy.getHitbox().intersects(shot.projShape))
+					{
+						activeEnemyList.remove(j);
+						if(shot.getPiercing()<=1)
+						{
+							projList.remove(i);
+							break OUTER;
+						}
+						else
+						{
+							shot.setPiercing(shot.getPiercing()-1);
+						}
+					}
+				}
+				
+			}
 		}
-		
-		
 	}
-	
-	/**
-	 * Fires the shot
-	 */
-	private void fireShot()
-	{
-		if(player.getNumProjectiles()<player.getMaxProjectiles())
-		{
-			player.addProjectile(player.getFacing(), projectileSpeed);
-		}
-	}
-
-
 
 	// IMPORTANT - if auto-gen'd by eclipse this is set to 0. You have to keep it at -1 or you'll
 	// get some stupid error that makes no sense.

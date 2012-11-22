@@ -12,7 +12,8 @@ public class Projectile{
 	Shape projShape;
 	boolean projDir;
 	float xSpeed; //positive is right
-	float ySpeed;
+	float ySpeed; //positive is down
+	int numPierce;
 	//damage?
 	
 	/**
@@ -21,20 +22,22 @@ public class Projectile{
 	 * @param direction direction of the shooter
 	 * @param speed Horizontal speed of the projectile, where positive is in the direction indicated by direction
 	 */
-	public Projectile(Shape shape, boolean direction, float speed)
+	public Projectile(Shape shape, boolean direction, float speed, int pierce)
 	{
 		projShape=shape;
 		this.xSpeed=speed*(direction?1:-1);
 		this.ySpeed=0;
 		projDir=direction;
+		numPierce=pierce;
 	}
 	
-	public Projectile(Shape shape, boolean direction, float xSpeed, float ySpeed)
+	public Projectile(Shape shape, boolean direction, float xSpeed, float ySpeed, int pierce)
 	{
 		projShape=shape;
 		this.xSpeed=xSpeed*(direction?1:-1);
 		this.ySpeed=ySpeed;
 		projDir=direction;
+		numPierce=pierce;
 	}
 	
 	public void update(int delta)
@@ -42,4 +45,22 @@ public class Projectile{
 		projShape.setX(projShape.getMinX()+xSpeed*delta);
 		projShape.setY(projShape.getMinY()+ySpeed*delta);
 	}
+
+	/**
+	 * Returns "isPiercing"
+	 * If shot should disappear after hitting an enemy, shot is not "piercing"
+	 * 
+	 * @return isPiercing
+	 * 
+	 */
+	public int getPiercing() {
+
+		return numPierce;
+	}
+	
+	public void setPiercing(int i)
+	{
+		numPierce = i;
+	}
+	
 }

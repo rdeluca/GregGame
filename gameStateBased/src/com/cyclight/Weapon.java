@@ -34,4 +34,18 @@ public interface Weapon {
 	 */
 	public void update(int delta);
 	
+	/**
+	 * Returns the number of enemies the shot can pierce
+	 * 
+	 * @return numPierce
+	 */
+	public int getPiercing();
+	
+	/**
+	 * Returns in-game name of weapon
+	 * 
+	 * @return weaponName
+	 */
+	public String getName();
+	
 }

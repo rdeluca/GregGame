@@ -16,6 +16,7 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
 import com.cyclight.BasicGun;
+import com.cyclight.PiercingGun;
 import com.cyclight.Projectile;
 import com.cyclight.VGun;
 import com.cyclight.Weapon;
@@ -66,7 +67,6 @@ public class Player extends GameCharacter {
 	 */
 	public Player(int startX, int startY, Animation pa) {
 		
-		
 		//If I were to ever to animate the sprite rather than have a static block this would be useful
 		Image gregImage = null;
 		try {
@@ -93,7 +93,11 @@ public class Player extends GameCharacter {
 			animation.addFrame(sheet.getSprite(0, 0), 150);
 		}*/
 		weaponList = new ArrayList<Weapon>();
+		weaponList.add(new BasicGun(null, null));
+		weaponList.add(new PiercingGun(null, null));
 		weaponList.add(new VGun(null, null)); //Change this line to switch weapons
+
+		
 		currentWeapon = 0;
 		spriteSheet=sheet;
 
@@ -207,7 +211,7 @@ public class Player extends GameCharacter {
 			shot = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
 		else
 			shot = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
-		projectileList.add(new Projectile(shot, direction, projectileSpeed));
+		projectileList.add(new Projectile(shot, direction, projectileSpeed, 1));
 		numProjectiles=projectileList.size();
 	}
 	
@@ -310,6 +314,8 @@ public class Player extends GameCharacter {
 		float horizontalSpeed = this.horizontalSpeed*delta;
 		float verticalSpeed = this.verticalSpeed*delta;
 		float gravity = this.gravity*delta;
+		
+		
 		
 		if (input.isKeyDown(Input.KEY_LEFT))
 		{	
@@ -424,6 +430,22 @@ public class Player extends GameCharacter {
 	public void onUpdate(Input input, int delta) {
 		// TODO Auto-generated method stub
 		handleMovement(input, delta);
+		
+		weaponChange(input);
+	}
+
+	private void weaponChange(Input input) {
+		if(input.isKeyPressed(Input.KEY_LSHIFT))
+		{
+			if(currentWeapon<weaponList.size()-1)
+			{
+				currentWeapon++;
+			}
+			else
+			{
+				currentWeapon=0;
+			}
+		}
 	}
 	
 }
