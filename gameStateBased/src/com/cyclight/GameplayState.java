@@ -137,6 +137,10 @@ public class GameplayState extends BasicGameState {
 		{
 			sbg.enterState(stateBasedGameTest.MAINMENUSTATE);
 		}
+		if (gc.getInput().isKeyDown(Input.KEY_TAB)||gc.getInput().isKeyDown(Input.KEY_P))
+		{
+			sbg.enterState(stateBasedGameTest.PAUSESCREENSTATE);
+		}		
 		if(gc.getInput().isKeyDown(Input.KEY_Y))
 		{
 			debug=true;

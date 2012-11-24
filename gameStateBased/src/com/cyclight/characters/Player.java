@@ -17,6 +17,7 @@ import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
 import com.cyclight.BasicGun;
 import com.cyclight.PiercingGun;
+import com.cyclight.PlayerInfo;
 import com.cyclight.Projectile;
 import com.cyclight.VGun;
 import com.cyclight.Weapon;
@@ -34,6 +35,9 @@ public class Player extends GameCharacter {
 	private boolean jumping=false;
 	private boolean grounded=false;
 	private boolean facing=true; //False left, true right    Could probably do this better...
+
+	PlayerInfo playerInfo;
+	
 	int maxJump=40;
 	int jumpCounter=maxJump;
 	float health = 100;

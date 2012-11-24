@@ -12,9 +12,10 @@ import org.newdawn.slick.state.StateBasedGame;
 
 
 public class stateBasedGameTest extends StateBasedGame {
-
+		
 	public static final int MAINMENUSTATE = 0;
 	public static final int GAMEPLAYSTATE = 1;
+	public static final int PAUSESCREENSTATE =2;
 
 	public stateBasedGameTest() {
 		super("Cyclight");
@@ -35,5 +36,6 @@ public class stateBasedGameTest extends StateBasedGame {
 	public void initStatesList(GameContainer gameContainer) throws SlickException {
 		this.addState(new MainMenuState(MAINMENUSTATE));
 		this.addState(new GameplayState(GAMEPLAYSTATE));
+		this.addState(new PauseScreenState(PAUSESCREENSTATE));
 	}
 }
