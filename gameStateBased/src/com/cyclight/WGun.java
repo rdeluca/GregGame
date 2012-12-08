@@ -8,7 +8,7 @@ import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Shape;
 
-public class VGun implements Weapon {
+public class WGun implements Weapon {
 			
 	private String weaponName= "V-Bow";
 	private Shape weaponHitbox;
@@ -22,7 +22,7 @@ public class VGun implements Weapon {
 //			private boolean active;
 	//Tween movement;
 	
-	public VGun(Shape shape, SpriteSheet sheet)
+	public WGun(Shape shape, SpriteSheet sheet)
 	{
 		currentDelay = 0;
 //				active=false;
@@ -41,19 +41,22 @@ public class VGun implements Weapon {
 	public int attack(ArrayList<Projectile> projList, Polygon hitbox, boolean direction)
 	{
 		currentDelay = delay;
-		Circle shot, shot2; 
+		Circle shot, shot2, shot3; 
 		if(direction)
 			{
 			shot = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
 			shot2 = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
+			shot3 = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
 			}
 		else
 			{
 			shot = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
 			shot2 = new Circle(hitbox.getMinX(), hitbox.getCenterY(), 5);
+			shot3 = new Circle(hitbox.getMaxX(), hitbox.getCenterY(), 5);
 			}
-		projList.add(new Projectile(shot, direction, projectileSpeed, -projectileYSpeed, numPierce));
-		projList.add(new Projectile(shot2, direction, projectileSpeed, projectileYSpeed, numPierce));
+		projList.add(new Projectile(shot, direction, projectileSpeed, -projectileYSpeed, numPierce)); //up
+		projList.add(new Projectile(shot2, direction, projectileSpeed, projectileYSpeed, numPierce)); //down
+		projList.add(new Projectile(shot3, direction, projectileSpeed, 0, numPierce)); //forward
 		return 0;
 	}
 	

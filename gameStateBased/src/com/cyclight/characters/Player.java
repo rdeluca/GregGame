@@ -15,13 +15,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
-import com.cyclight.BasicGun;
-import com.cyclight.PiercingGun;
-import com.cyclight.PlayerInfo;
-import com.cyclight.Projectile;
-import com.cyclight.VGun;
-import com.cyclight.Weapon;
-import com.cyclight.collisionHandler;
+import com.cyclight.*;
 
 public class Player extends GameCharacter {
 
@@ -99,7 +93,8 @@ public class Player extends GameCharacter {
 		weaponList = new ArrayList<Weapon>();
 		weaponList.add(new BasicGun(null, null));
 		weaponList.add(new PiercingGun(null, null));
-		weaponList.add(new VGun(null, null)); //Change this line to switch weapons
+		weaponList.add(new WGun(null, null));
+		weaponList.add(new ArcThrower(null,null));
 
 		
 		currentWeapon = 0;
@@ -417,6 +412,7 @@ public class Player extends GameCharacter {
 			{
 				// If 'grounded' and in the air - then fall more
 				collisionHandler.move(hitbox, "down", gravity);
+				setGrounded(false);
 			}
 			else
 			{

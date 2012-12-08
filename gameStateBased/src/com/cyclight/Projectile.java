@@ -11,8 +11,8 @@ public class Projectile{
 	
 	Shape projShape;
 	boolean projDir;
-	float xSpeed; //positive is right
-	float ySpeed; //positive is down
+	protected float xSpeed; //positive is right
+	protected float ySpeed; //positive is down
 	int numPierce;
 	//damage?
 	
