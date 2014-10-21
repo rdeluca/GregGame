@@ -1,1 +1,1 @@
-This is an old barely started abandoned project. 
+This is an old abandoned project. 
